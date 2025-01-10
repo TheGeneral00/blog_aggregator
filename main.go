@@ -23,5 +23,7 @@ func main() {
                 os.Exit(1)
         }
         command := functions.NewCommand(args)
-        commands.Run(state, command)
+        if commands.Run(state, command) != 0 {
+                os.Exit(1)
+        }
 }

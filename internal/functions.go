@@ -50,14 +50,19 @@ func handlerLogin(s *state, cmd command) int{
         if len(cmd.args)==0{
                 fmt.Printf("Missing username for login")
                 return 1
-        } 
-        err := s.config.SetUser(cmd.args[0])
-        if err != nil{
-                fmt.Printf("Failed to login user: '%v'", err)
-                return 1
-        }  
-        fmt.Printf("User set to %v\n", cmd.args[0])
-        return 0
+        }
+        tmpContext := context.Background()
+        if _, err := s.db.GetUser(tmpContext, cmd.args[0]); err == nil{  
+                err := s.config.SetUser(cmd.args[0])
+                if err != nil{
+                        fmt.Printf("Failed to login user: '%v'", err)
+                        return 1
+                }  
+                fmt.Printf("User set to %v\n", cmd.args[0])
+                return 0 
+        }
+        return 1
+
 }
 
 func handlerRegister(s *state, cmd command) int{
