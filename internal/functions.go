@@ -34,7 +34,8 @@ func NewCommands() *commands {
                 available: map[string]func(*state, command) int{
                 "login": handlerLogin,
                 "register": handlerRegister,
-                "reset": handleReset,
+                "reset": handlerReset,
+                "users": handlerUsers,
                 },
         }
 }
@@ -117,7 +118,7 @@ func (s *state) SetDB(db *sql.DB) {
         s.db = database.New(db)
 }
 
-func handleReset(s *state, cmd command) int {
+func handlerReset(s *state, cmd command) int {
         if len(cmd.args) != 0 {
                 fmt.Println("Reset does not require further args")
                 return 1
@@ -129,4 +130,26 @@ func handleReset(s *state, cmd command) int {
         }
         fmt.Println("Cleared users table")
         return 0 
+}
+
+func handlerUsers(s *state, cmd command) int {
+        if len(cmd.args) != 0 {
+                fmt.Println("Users does not require further args")
+                return 1
+        }
+        ctx := context.Background()
+        users, err := s.db.GetUsers(ctx)
+        if err != nil {
+                fmt.Printf("Request failed: %v", err)
+                return 1
+        }
+        for _, name := range(users){
+                if name == s.config.CurrentUserName {
+                        fmt.Printf("%v (current)\n", name)
+                } else {
+                        fmt.Printf("%v\n", name)
+                }
+        }
+        return 0
+
 }
