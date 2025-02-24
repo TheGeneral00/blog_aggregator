@@ -1,29 +1,44 @@
 package main
 
 import (
-	"fmt"
+	"database/sql"
+	"log"
 	"os"
-        "database/sql"
-	"github.com/TheGeneral00/blog_aggregator/internal"
-        "github.com/TheGeneral00/blog_aggregator/internal/config"
-        _ "github.com/lib/pq"
+
+	"github.com/TheGeneral00/blog_aggregator/internal/config"
+	"github.com/TheGeneral00/blog_aggregator/internal/database"
+	"github.com/TheGeneral00/blog_aggregator/internal/functions"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-        state := functions.NewState(config.Read())
-        commands := functions.NewCommands()
-        db, err := sql.Open("postgres", state.GetDBURL())
+        cfg, err := config.Read()
         if err != nil {
-                fmt.Println("Failed to open dbURL")
+                log.Fatal(err)
         }
-        state.SetDB(db)
+        if err != nil {
+                log.Fatal(err)
+        }
+        commands := functions.NewCommands()
+        db, err := sql.Open("postgres", config.DBURL)
+        if err != nil {
+                log.Fatal("Failed to open dbURL")
+        }
+        defer db.Close()
+        dbQuerries := database.New(db)
+
+        programState, err := functions.NewState(&cfg, dbQuerries)
+        if err != nil {
+                log.Fatal(err)
+        }
+
         args := os.Args
         if len(args)<2{
-                fmt.Println("Not enough arguments provided")
-                os.Exit(1)
+                log.Fatal("Not enough arguments provided")
         }
-        command := functions.NewCommand(args)
-        if commands.Run(state, command) != 0 {
-                os.Exit(1)
+        command := functions.NewCommand(os.Args[1], os.Args[2:])
+        err = commands.Run(programState, command)
+        if err != nil {
+                log.Fatal(err)
         }
 }
