@@ -19,8 +19,7 @@ VALUES (
         $2,
         $3,
         $4
-)
-RETURNING id, created_at, updated_at, name
+)RETURNING id, created_at, updated_at, name
 `
 
 type CreateUserParams struct {
@@ -97,7 +96,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 }
 
 const reset = `-- name: Reset :exec
-TRUNCATE TABLE users
+TRUNCATE TABLE users CASCADE
 `
 
 func (q *Queries) Reset(ctx context.Context) error {

@@ -36,6 +36,7 @@ func NewCommands() *commands {
                 "reset": handlerReset,
                 "users": handlerListUsers,
                 "agg": handlerAggregate,
+                "addfeed": handlerAddFeed,
                 },
         }
 }
