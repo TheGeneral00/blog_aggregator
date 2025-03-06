@@ -8,3 +8,10 @@ Values(
         Now(),
         $3
 ) RETURNING *;
+
+-- name: GetFeeds :many
+SELECT * FROM feeds;
+
+-- name: GetFeedByURL :one
+Select * FROM feeds
+Where url = $1;

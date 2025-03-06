@@ -20,10 +20,22 @@ func handlerAddFeed(state *state, cmd command) error {
                 Url: cmd.Args[1],
                 UserID: user.ID,
         }
-        _, err = state.db.AddFeed(context.Background(), params)
+        feed, err := state.db.AddFeed(context.Background(), params)
         if err != nil {
                 return err
         }
         fmt.Printf("Added '%v'\n", cmd.Args[0])
+
+        user, err = state.db.GetUser(context.Background(), state.config.CurrentUserName)
+        if err != nil{
+                return err
+        }
+        var createFeedFollowParams database.CreateFeedFollowParams
+        createFeedFollowParams.UserID = user.ID
+        createFeedFollowParams.FeedID = feed.ID 
+        _, err = state.db.CreateFeedFollow(context.Background(), createFeedFollowParams)
+        if err != nil {
+                return err
+        }
         return nil 
 }
