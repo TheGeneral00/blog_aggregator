@@ -7,13 +7,9 @@ import (
 	"github.com/TheGeneral00/blog_aggregator/internal/database"
 )
 
-func handlerAddFeed(state *state, cmd command) error {
+func handlerAddFeed(state *state, cmd command, user database.User) error {
         if len(cmd.Args) != 2 {
                 return fmt.Errorf("Usage: addfeed [name] [url]")
-        }
-        user, err := state.db.GetUser(context.Background(), state.config.CurrentUserName)
-        if err != nil{
-                return err
         }
         params := database.AddFeedParams{
                 Name: cmd.Args[0],

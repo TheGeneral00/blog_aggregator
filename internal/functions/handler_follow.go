@@ -7,16 +7,12 @@ import (
 	"github.com/TheGeneral00/blog_aggregator/internal/database"
 )
 
-func handlerFollow(state *state, cmd command) error{
+func handlerFollow(state *state, cmd command, user database.User) error{
         if len(cmd.Args) != 1 {
                 return fmt.Errorf("Usage: follow [URL]\n")
         }
         feed, err := state.db.GetFeedByURL(context.Background(), cmd.Args[0])
         if err != nil {
-                return err
-        }
-        user, err := state.db.GetUser(context.Background(), state.config.CurrentUserName)
-        if err != nil{
                 return err
         }
         var feedFollowParams database.CreateFeedFollowParams

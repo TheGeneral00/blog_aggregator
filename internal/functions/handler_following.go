@@ -3,19 +3,16 @@ package functions
 import (
 	"context"
 	"fmt"
+
+	"github.com/TheGeneral00/blog_aggregator/internal/database"
 )
 
-func handlerFollowing(state *state, cmd command) error{
+func handlerFollowing(state *state, cmd command, user database.User) error{
         if len(cmd.Args) != 0 {
                 return fmt.Errorf("The command takes no additional arguments")
         }
 
-        currUser, err := state.db.GetUser(context.Background(), state.config.CurrentUserName)
-        if err != nil{
-                return err
-        } 
-
-        feeds, err := state.db.GetFeedFollowsForUser(context.Background(), currUser.ID)
+        feeds, err := state.db.GetFeedFollowsForUser(context.Background(), user.ID)
         if err != nil{
                 return err
         }

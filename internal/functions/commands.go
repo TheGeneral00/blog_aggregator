@@ -1,8 +1,10 @@
 package functions
 
 import (
+	"context"
 	"errors"
-        "fmt"
+	"fmt"
+
 	"github.com/TheGeneral00/blog_aggregator/internal/config"
 	"github.com/TheGeneral00/blog_aggregator/internal/database"
 )
@@ -36,10 +38,11 @@ func NewCommands() *commands {
                 "reset": handlerReset,
                 "users": handlerListUsers,
                 "agg": handlerAggregate,
-                "addfeed": handlerAddFeed,
+                "addfeed": middlewareLoggedIn(handlerAddFeed),
                 "feeds": handlerFeeds,
-                "follow": handlerFollow,
-                "following": handlerFollowing,
+                "follow": middlewareLoggedIn(handlerFollow),
+                "following": middlewareLoggedIn(handlerFollowing),
+                "unfollow": middlewareLoggedIn(handlerUnfollow),
                 },
         }
 }
@@ -56,3 +59,14 @@ func (c *commands) Run(s *state, cmd command) error {
         return f(s, cmd)
 }
 
+func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) error) func(s *state, cmd command) error {
+        return func(s *state, cmd command) error {
+
+                user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
+                if err != nil {
+                        return err
+                }
+
+                return handler(s, cmd, user)
+        }
+}
