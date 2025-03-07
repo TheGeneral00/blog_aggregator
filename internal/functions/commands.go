@@ -37,7 +37,7 @@ func NewCommands() *commands {
                 "register": handlerRegister,
                 "reset": handlerReset,
                 "users": handlerListUsers,
-                "agg": handlerAggregate,
+                "agg": middlewareLoggedIn(handlerAggregate),
                 "addfeed": middlewareLoggedIn(handlerAddFeed),
                 "feeds": handlerFeeds,
                 "follow": middlewareLoggedIn(handlerFollow),
