@@ -14,7 +14,7 @@ type RSSFeed struct {
                 Title           string          `xml:"title"`
                 Link            string          `xml:"link"`
                 Description     string          `xml:"description"`
-                Item            []RSSItem       `xml:"item"`
+                Items            []RSSItem       `xml:"item"`
         } `xml:"channel"`
 }
 
@@ -56,9 +56,9 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
         rssFeed.Channel.Title = html.UnescapeString(rssFeed.Channel.Title)
         rssFeed.Channel.Link = html.UnescapeString(rssFeed.Channel.Link)
 
-        for i := range rssFeed.Channel.Item {
-                rssFeed.Channel.Item[i].Title = html.UnescapeString(rssFeed.Channel.Item[i].Title)
-                rssFeed.Channel.Item[i].Link = html.UnescapeString(rssFeed.Channel.Item[i].Link)
+        for i := range rssFeed.Channel.Items {
+                rssFeed.Channel.Items[i].Title = html.UnescapeString(rssFeed.Channel.Items[i].Title)
+                rssFeed.Channel.Items[i].Link = html.UnescapeString(rssFeed.Channel.Items[i].Link)
         }
         return &rssFeed, nil
 }

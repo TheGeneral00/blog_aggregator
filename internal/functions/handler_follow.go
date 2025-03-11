@@ -22,6 +22,6 @@ func handlerFollow(state *state, cmd command, user database.User) error{
         if err != nil{
                 return err
         }
-        fmt.Printf("%v is now following %v", user.Name, feed.Name)
+        fmt.Printf("%v is now following %v\n", user.Name, feed.Name)
         return nil
 }
